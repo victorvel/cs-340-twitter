@@ -3,6 +3,7 @@ package edu.byu.cs.tweeter.client.model.service;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -11,9 +12,11 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import edu.byu.cs.tweeter.client.backgroundTask.GetFollowersTask;
 import edu.byu.cs.tweeter.client.backgroundTask.GetFollowingTask;
 import edu.byu.cs.tweeter.client.backgroundTask.GetUserTask;
 import edu.byu.cs.tweeter.client.cache.Cache;
+import edu.byu.cs.tweeter.client.presenter.FollowersPresenter;
 import edu.byu.cs.tweeter.client.view.main.MainActivity;
 import edu.byu.cs.tweeter.client.view.main.following.FollowingFragment;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
@@ -32,6 +35,12 @@ public class FollowService {
         GetFollowingTask getFollowingTask = new GetFollowingTask(currUserAuthToken, user, pageSize, lastFollowee, new GetFollowingHandler(getFollowingObserver));
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(getFollowingTask);
+    }
+
+    public void loadMoreItemsFollowers(AuthToken currUserAuthToken, User user, int pageSize, User lastFollowee, GetFollowingObserver getFollowingObserver) {
+        GetFollowersTask getFollowersTask = new GetFollowersTask(currUserAuthToken, user, pageSize, lastFollowee, new GetFollowersHandler(getFollowingObserver));
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(getFollowersTask);
     }
 
     public void getUserInformation(AuthToken currUserAuthToken, String user, GetFollowingObserver getFollowingObserver) {
@@ -91,6 +100,33 @@ public class FollowService {
             } else if (msg.getData().containsKey(GetUserTask.EXCEPTION_KEY)) {
                 Exception ex = (Exception) msg.getData().getSerializable(GetUserTask.EXCEPTION_KEY);
                 observer.displayErrorMessage("Failed to get user's profile because of exception: " + ex.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Message handler (i.e., observer) for GetFollowersTask.
+     */
+    private class GetFollowersHandler extends Handler {
+
+        private GetFollowingObserver observer;
+
+        public GetFollowersHandler(GetFollowingObserver observer) {
+            this.observer = observer;
+        }
+
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            boolean success = msg.getData().getBoolean(GetFollowersTask.SUCCESS_KEY);
+            if (success) {
+                List<User> followers = (List<User>) msg.getData().getSerializable(GetFollowersTask.FOLLOWERS_KEY);
+                observer.addFolowees(followers, msg.getData().getBoolean(GetFollowersTask.MORE_PAGES_KEY));
+            } else if (msg.getData().containsKey(GetFollowersTask.MESSAGE_KEY)) {
+                String message = msg.getData().getString(GetFollowersTask.MESSAGE_KEY);
+                observer.displayErrorMessage("Failed to get followers: " + message);
+            } else if (msg.getData().containsKey(GetFollowersTask.EXCEPTION_KEY)) {
+                Exception ex = (Exception) msg.getData().getSerializable(GetFollowersTask.EXCEPTION_KEY);
+                observer.displayErrorMessage("Failed to get followers because of exception: " + ex.getMessage());
             }
         }
     }
