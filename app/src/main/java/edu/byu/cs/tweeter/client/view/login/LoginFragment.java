@@ -100,4 +100,9 @@ public class LoginFragment extends Fragment implements LoginPresenter.View {
         displayMessage("Hello " + name);
         startActivity(intent);
     }
+
+    @Override
+    public void userRegistered(User user, String name) {
+
+    }
 }

@@ -18,6 +18,7 @@ public class LoginPresenter implements UserService.GetUserObserver {
     public interface View {
         void displayMessage(String message);
         void userLoggedIn(User user, String name);
+        void userRegistered(User user, String name);
     }
 
     public void userLogin(String username, String password) {
@@ -45,5 +46,10 @@ public class LoginPresenter implements UserService.GetUserObserver {
     @Override
     public void userLoggedIn(User user, String name) {
         view.userLoggedIn(user, name);
+    }
+
+    @Override
+    public void userRegistered(User user, String name) {
+        view.userRegistered(user, name);
     }
 }
