@@ -48,7 +48,7 @@ public class User implements Comparable<User>, Serializable {
         return lastName;
     }
 
-    public String getName() {
+    public java.lang.String getName() {
         return String.format("%s %s", firstName, lastName);
     }
 

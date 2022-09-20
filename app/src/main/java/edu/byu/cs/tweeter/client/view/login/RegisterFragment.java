@@ -50,6 +50,8 @@ public class RegisterFragment extends Fragment {
     private TextView errorView;
     private Toast registeringToast;
 
+
+
     /**
      * Creates an instance of the fragment and places the user and auth token in an arguments
      * bundle assigned to the fragment.
