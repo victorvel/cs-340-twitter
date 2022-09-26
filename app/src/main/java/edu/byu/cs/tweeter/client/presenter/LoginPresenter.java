@@ -19,10 +19,11 @@ public class LoginPresenter implements UserService.GetUserObserver {
         void displayMessage(String message);
         void userLoggedIn(User user, String name);
         void userRegistered(User user, String name);
+        void displayLoginMessage(String message);
     }
 
     public void userLogin(String username, String password) {
-        view.displayMessage("Logging In...");
+        view.displayLoginMessage("Logging In...");
         userService.userLogin(username, password, this);
     }
 

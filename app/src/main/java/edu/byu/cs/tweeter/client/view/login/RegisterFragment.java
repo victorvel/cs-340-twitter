@@ -129,12 +129,20 @@ public class RegisterFragment extends Fragment implements RegisterPresenter.View
     public void userRegistered(User registeredUser, String name) {
         Intent intent = new Intent(getContext(), MainActivity.class);
         intent.putExtra(MainActivity.CURRENT_USER_KEY, registeredUser);
-        // registeringToast.cancel();
+
+        registeringToast.cancel();
+
         displayMessage("Hello " + name);
         try {
             startActivity(intent);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    @Override
+    public void displayRegisteredMessage(String message) {
+        registeringToast = Toast.makeText(getContext(), message, Toast.LENGTH_LONG);
+        registeringToast.show();
     }
 }

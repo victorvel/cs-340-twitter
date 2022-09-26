@@ -24,6 +24,7 @@ public class RegisterPresenter implements UserService.GetUserObserver {
     public interface View {
         void displayMessage(String message);
         void userRegistered(User registeredUser, String name);
+        void displayRegisteredMessage(String message);
     }
 
     public RegisterPresenter(View view) {
@@ -32,7 +33,7 @@ public class RegisterPresenter implements UserService.GetUserObserver {
     }
 
     public void registerUser(String firstName, String lastName, String alias, String password, Bitmap image) {
-        view.displayMessage("Registering...");
+        view.displayRegisteredMessage("Registering...");
 
         // Convert image to byte array.
         ByteArrayOutputStream bos = new ByteArrayOutputStream();

@@ -95,7 +95,7 @@ public class LoginFragment extends Fragment implements LoginPresenter.View {
         Intent intent = new Intent(getContext(), MainActivity.class);
         intent.putExtra(MainActivity.CURRENT_USER_KEY, user);
 
-        // loginInToast.cancel();
+        loginInToast.cancel();
 
         displayMessage("Hello " + name);
         startActivity(intent);
@@ -104,5 +104,11 @@ public class LoginFragment extends Fragment implements LoginPresenter.View {
     @Override
     public void userRegistered(User user, String name) {
 
+    }
+
+    @Override
+    public void displayLoginMessage(String message) {
+        loginInToast = Toast.makeText(getContext(), message, Toast.LENGTH_LONG);
+        loginInToast.show();
     }
 }
