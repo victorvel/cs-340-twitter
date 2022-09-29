@@ -4,6 +4,7 @@ import java.util.List;
 
 import edu.byu.cs.tweeter.client.cache.Cache;
 import edu.byu.cs.tweeter.client.model.service.FollowService;
+import edu.byu.cs.tweeter.client.model.service.UserService;
 import edu.byu.cs.tweeter.model.domain.User;
 
 public class FollowersPresenter {
@@ -11,6 +12,7 @@ public class FollowersPresenter {
     private static final int PAGE_SIZE = 10;
 
     FollowService followService;
+    UserService userService;
     View view;
     private boolean hasMorePages;
     private boolean isLoading = false;
@@ -19,6 +21,7 @@ public class FollowersPresenter {
     public FollowersPresenter(View view) {
         this.view = view;
         followService = new FollowService();
+        userService = new UserService();
     }
 
     public interface View {
@@ -43,7 +46,7 @@ public class FollowersPresenter {
     }
 
     public void userInformation(String user) {
-        followService.getUserInformation(Cache.getInstance().getCurrUserAuthToken(), user, new GetFollowersObserver());
+        userService.getUserInformation(Cache.getInstance().getCurrUserAuthToken(), user, new GetUserObserver());
     }
 
     private class GetFollowersObserver implements FollowService.GetFollowingObserver {
@@ -62,6 +65,54 @@ public class FollowersPresenter {
             view.displayMessage(message);
             view.setLoadingFooter(false);
             isLoading = false;
+        }
+
+        @Override
+        public void displayMessage(String message) {
+            view.displayMessage(message);
+        }
+
+        @Override
+        public void isFollower(boolean isFollower) {
+
+        }
+
+        @Override
+        public void updateFollowingAndFollowers(boolean updateFollowButton) {
+
+        }
+
+        @Override
+        public void setFollowerCount(int count) {
+
+        }
+
+        @Override
+        public void setFolloweeCount(int count) {
+
+        }
+    }
+
+    private class GetUserObserver implements UserService.GetUserObserver {
+
+        @Override
+        public void displayErrorMessage(String message) {
+
+        }
+
+        @Override
+        public void userLoggedIn(User user, String name) {
+
+        }
+
+        @Override
+        public void userRegistered(User user, String name) {
+
+        }
+
+        @Override
+        public void userLoggedOut() {
+
         }
 
         @Override

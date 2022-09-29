@@ -53,4 +53,19 @@ public class LoginPresenter implements UserService.GetUserObserver {
     public void userRegistered(User user, String name) {
         view.userRegistered(user, name);
     }
+
+    @Override
+    public void userLoggedOut() {
+
+    }
+
+    @Override
+    public void startUserActivity(User user) {
+
+    }
+
+    @Override
+    public void displayMessage(String message) {
+
+    }
 }

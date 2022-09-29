@@ -1,42 +1,38 @@
 package edu.byu.cs.tweeter.client.presenter;
 
-import android.content.Intent;
-import android.widget.Toast;
+import android.view.View;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-import edu.byu.cs.tweeter.client.backgroundTask.GetUserTask;
 import edu.byu.cs.tweeter.client.cache.Cache;
 import edu.byu.cs.tweeter.client.model.service.FollowService;
+import edu.byu.cs.tweeter.client.model.service.StatusService;
 import edu.byu.cs.tweeter.client.model.service.UserService;
-import edu.byu.cs.tweeter.client.view.main.MainActivity;
-import edu.byu.cs.tweeter.client.view.main.following.FollowingFragment;
+import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 
-public class FollowingPresenter {
+public class FeedPresenter {
 
     private static final int PAGE_SIZE = 10;
 
-    private View view;
-    private FollowService followService;
-    private UserService userService;
-    private User lastFollowee;
     private boolean hasMorePages;
     private boolean isLoading = false;
+    private View view;
+    private StatusService statusService;
+    private UserService userService;
+    private Status lastStatus;
 
-    public interface View {
-        void displayMessage(String message);
-        void setLoadingFooter(boolean value);
-        void addFollowees(List<User> followees);
-        void startUserActivity(User user);
+    public FeedPresenter(View view) {
+        this.view = view;
+        statusService = new StatusService();
+        userService = new UserService();
     }
 
-    public FollowingPresenter(View view) {
-        this.view = view;
-        followService = new FollowService();
-        userService = new UserService();
+    public interface View {
+        void setLoadingFooter(boolean value);
+        void addStatuses(List<Status> statuses);
+        void displayMessage(String message);
+        void startUserActivity(User user);
     }
 
     public boolean hasMorePages() {
@@ -50,29 +46,27 @@ public class FollowingPresenter {
     public void loadMoreItems(User user) {
         isLoading = true;
         view.setLoadingFooter(true);
-        followService.loadMoreItems(Cache.getInstance().getCurrUserAuthToken(), user, PAGE_SIZE, lastFollowee, new GetFollowingObserver());
+        statusService.loadMoreItems(Cache.getInstance().getCurrUserAuthToken(), user, PAGE_SIZE, lastStatus, new GetStatusObserver());
     }
 
     public void userInformation(String user) {
         userService.getUserInformation(Cache.getInstance().getCurrUserAuthToken(), user, new GetUserObserver());
     }
 
-    private class GetFollowingObserver implements FollowService.GetFollowingObserver {
+    private class GetStatusObserver implements StatusService.GetStatusObserver {
 
         @Override
-        public void addFolowees(List<User> followees, boolean hasMorePages) {
+        public void addStatuses(List<Status> statuses, boolean hasMorePages) {
             isLoading = false;
             view.setLoadingFooter(false);
-            lastFollowee = (followees.size() > 0) ? followees.get(followees.size() - 1) : null;
-            view.addFollowees(followees);
-            FollowingPresenter.this.hasMorePages = hasMorePages;
+            lastStatus = (statuses.size() > 0) ? statuses.get(statuses.size() - 1) : null;
+            view.addStatuses(statuses);
+            FeedPresenter.this.hasMorePages = hasMorePages;
         }
 
         @Override
         public void displayErrorMessage(String message) {
             view.displayMessage(message);
-            view.setLoadingFooter(false);
-            isLoading = false;
         }
 
         @Override
@@ -81,22 +75,7 @@ public class FollowingPresenter {
         }
 
         @Override
-        public void isFollower(boolean isFollower) {
-
-        }
-
-        @Override
-        public void updateFollowingAndFollowers(boolean updateFollowButton) {
-
-        }
-
-        @Override
-        public void setFollowerCount(int count) {
-
-        }
-
-        @Override
-        public void setFolloweeCount(int count) {
+        public void postStatus(String message) {
 
         }
     }
